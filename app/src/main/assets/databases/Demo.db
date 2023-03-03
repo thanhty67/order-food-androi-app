@@ -1,0 +1,9 @@
+Create Table OrderDetail {
+		ID INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+		ProductId TEXT,
+		ProductName TEXT,
+		Quantity TEXT,
+		Price TEXT,
+		Discount TEXT
+
+}
