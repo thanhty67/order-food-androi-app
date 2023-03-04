@@ -43,6 +43,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import io.paperdb.Paper;
+
 public class Home extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     FirebaseDatabase database;
@@ -70,6 +72,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         //Init Firebase
         database = FirebaseDatabase.getInstance();
         category = database.getReference("Category");
+
+        Paper.init(this);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +106,12 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
 
         layoutManager = new LinearLayoutManager(this);
         recycler_menu.setLayoutManager(layoutManager);
+        if (Common.isConnectedToInternet(this)) {
 
-        loadMenu();
+            loadMenu();
+        } else {
+            Toast.makeText(this, "Please check your connection !!", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -156,6 +165,9 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
 
+        if (item.getItemId() == R.id.refresh) {
+            loadMenu();
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -164,15 +176,19 @@ public class Home extends AppCompatActivity implements NavigationView.OnNavigati
         int id = item.getItemId();
 
         if (id == R.id.nav_menu) {
-
-        } else if ((id == R.id.nave_view)) {
-
         } else if ((id == R.id.nav_cart)) {
-
+            Intent cartIntent = new Intent(Home.this, Cart.class);
+            startActivity(cartIntent);
         } else if ((id == R.id.nave_signOut)) {
 
-        } else if ((id == R.id.nav_other)) {
+            Paper.book().destroy();
 
+            Intent sIntent = new Intent(Home.this, SignIn.class);
+            sIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(sIntent);
+        } else if ((id == R.id.nav_order)) {
+            Intent orIntent = new Intent(Home.this, OrderStatus.class);
+            startActivity(orIntent);
         }
 
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
